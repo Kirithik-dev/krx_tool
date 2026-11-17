@@ -100,6 +100,9 @@ export default function KRXApp() {
         <ToolsPage
           toolSlug={route.toolSlug}
           onNavigateHome={() => navigate('/')}
+          onNavigateTool={(slug) =>
+            navigate(slug ? `/tools/${slug}` : '/tools')
+          }
         />
       ) : (
         <HomeExperience onEnterToolkit={() => navigate('/tools')} />

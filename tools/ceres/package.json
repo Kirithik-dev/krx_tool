@@ -1,0 +1,9 @@
+{
+  "name": "@krx/ceres",
+  "private": true,
+  "version": "0.1.0",
+  "description": "CERES — Know what goes into you. AI-powered product intelligence system in the KRX ecosystem.",
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts"
+}

@@ -1,14 +1,17 @@
-import { useEffect, useRef, useState, type MouseEvent } from 'react';
+import { useEffect, useMemo, useRef, useState, type MouseEvent } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import { GlassflowSearchBar } from '../components/GlassflowSearchBar';
+import { ToolkitCardGrid } from '../components/ToolkitCardGrid';
 import { ToolkitStudioBackdrop } from '../components/ToolkitStudioBackdrop';
 import { KRX_CONTENT } from '../data/krxContent';
+import { KRX_TOOLKIT_REGISTRY } from '../data/toolkitRegistry';
 import { KRX_TOKENS } from '../tokens/designTokens';
 import { usePrefersReducedMotion } from '../motion/useScrollChoreography';
 
 interface ToolsPageProps {
   toolSlug: string | null;
   onNavigateHome: () => void;
+  onNavigateTool?: (slug: string | null) => void;
 }
 
 function BackArrow({ className = '' }: { className?: string }) {
@@ -130,18 +133,40 @@ function ChampagneTitaniumSearchLoader({
 
 /**
  * Architectural Champagne Titanium route container for `/tools` (and `/tools/:toolSlug`).
- * Integrates the frosted champagne Glassflow search console inside a sunlit titanium studio bay.
+ * Integrates the frosted champagne Glassflow search console and the 3-column
+ * creative-agency toolkit showcase grid inside a sunlit titanium studio bay.
  */
-export function ToolsPage({ toolSlug, onNavigateHome }: ToolsPageProps) {
+export function ToolsPage({
+  toolSlug,
+  onNavigateHome,
+  onNavigateTool,
+}: ToolsPageProps) {
   const reducedMotion = usePrefersReducedMotion();
-  const [searchQuery, setSearchQuery] = useState<string>(() => toolSlug ?? '');
+  const [searchQuery, setSearchQuery] = useState<string>('');
   const [isSearching, setIsSearching] = useState<boolean>(false);
   const [activeSubmittedQuery, setActiveSubmittedQuery] = useState<string>('');
   const searchTimerRef = useRef<number | null>(null);
 
-  useEffect(() => {
-    setSearchQuery(toolSlug ?? '');
+  const activeTool = useMemo(() => {
+    if (!toolSlug) return null;
+    const normalized = toolSlug.trim().toLowerCase();
+    return (
+      KRX_TOOLKIT_REGISTRY.find((t) => t.slug.toLowerCase() === normalized) ??
+      null
+    );
   }, [toolSlug]);
+
+  const visibleTools = useMemo(() => {
+    const q = searchQuery.trim().toLowerCase();
+    if (!q) return KRX_TOOLKIT_REGISTRY;
+    return KRX_TOOLKIT_REGISTRY.filter(
+      (tool) =>
+        tool.name.toLowerCase().includes(q) ||
+        tool.tagline.toLowerCase().includes(q) ||
+        tool.category.toLowerCase().includes(q) ||
+        tool.description.toLowerCase().includes(q)
+    );
+  }, [searchQuery]);
 
   useEffect(() => {
     return () => {
@@ -150,6 +175,21 @@ export function ToolsPage({ toolSlug, onNavigateHome }: ToolsPageProps) {
       }
     };
   }, []);
+
+  const handleSelectTool = (slug: string | null) => {
+    if (onNavigateTool) {
+      onNavigateTool(slug);
+      return;
+    }
+    const targetPath = slug ? `/tools/${slug}` : '/tools';
+    if (
+      typeof window !== 'undefined' &&
+      window.location.pathname !== targetPath
+    ) {
+      window.history.pushState(null, '', targetPath);
+      window.dispatchEvent(new PopStateEvent('popstate'));
+    }
+  };
 
   const handleQueryChange = (nextQuery: string) => {
     setSearchQuery(nextQuery);
@@ -187,6 +227,12 @@ export function ToolsPage({ toolSlug, onNavigateHome }: ToolsPageProps) {
     onNavigateHome();
   };
 
+  // When a dedicated tool slug is active (e.g. /tools/ceres), render its independent interface
+  if (activeTool) {
+    const { ToolAppComponent } = activeTool;
+    return <ToolAppComponent onBackToTools={() => handleSelectTool(null)} />;
+  }
+
   return (
     <motion.div
       initial={reducedMotion ? false : { opacity: 0 }}
@@ -220,24 +266,27 @@ export function ToolsPage({ toolSlug, onNavigateHome }: ToolsPageProps) {
         </div>
       </header>
 
-      {/* Primary Architectural Search Bay (positioned in upper third, ~32% from top of viewport) */}
+      {/* Primary Architectural Search Bay + 3-Column Creative Agency Showcase Grid */}
       <main
         aria-label="KRX Toolkit"
-        className="relative z-10 flex-1 flex flex-col items-center justify-start mx-auto w-full max-w-[1440px] px-5 sm:px-8 md:px-12 pt-[clamp(64px,calc(32vh-120px),180px)] md:pt-[clamp(80px,calc(32vh-134px),220px)] pb-16"
+        className="relative z-10 flex-1 flex flex-col items-center justify-start mx-auto w-full max-w-[1440px] px-5 sm:px-8 md:px-12 pt-[clamp(64px,calc(32vh-120px),180px)] md:pt-[clamp(80px,calc(32vh-134px),220px)] pb-28"
       >
-        <div className="relative w-full md:w-[50vw] max-w-[740px] flex flex-col items-center">
-          {/* Restrained Architectural Eyebrow */}
-          <motion.p
-            initial={reducedMotion ? false : { opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.75, ease: KRX_TOKENS.motion.easeCinema }}
-            className="mb-5 text-[11px] font-medium tracking-[0.34em] uppercase text-[#6D5838]/88 select-none"
-          >
-            KRX TOOLKIT
-          </motion.p>
+        {/* Restrained Architectural Eyebrow */}
+        <motion.p
+          initial={reducedMotion ? false : { opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.75, ease: KRX_TOKENS.motion.easeCinema }}
+          className="mb-5 text-[11px] font-medium tracking-[0.34em] uppercase text-[#6D5838]/88 select-none"
+        >
+          KRX TOOLKIT
+        </motion.p>
 
-          {/* Architectural Axis Integration Shoulders framing the Frosted Champagne console */}
-          <div className="relative w-full flex items-center">
+        {/* Sticky Search Bar Container (sticks at 50px from top of viewport, centered in main container) */}
+        <div
+          data-testid="toolkit-sticky-search-shell"
+          className="sticky top-[50px] z-30 w-full flex flex-col items-center py-2"
+        >
+          <div className="relative w-full md:w-[50vw] max-w-[740px] flex items-center">
             <span
               aria-hidden="true"
               className="hidden md:block pointer-events-none absolute right-[calc(100%+18px)] top-1/2 h-[1px] w-14 bg-gradient-to-l from-[#967A4F]/42 to-transparent"
@@ -265,6 +314,12 @@ export function ToolsPage({ toolSlug, onNavigateHome }: ToolsPageProps) {
             )}
           </AnimatePresence>
         </div>
+
+        {/* 3-Column Agency Portfolio Card Grid — CERES First */}
+        <ToolkitCardGrid
+          tools={visibleTools}
+          onSelectTool={(slug) => handleSelectTool(slug)}
+        />
       </main>
 
       {/* Quiet KRX Structural Footer Rule */}
