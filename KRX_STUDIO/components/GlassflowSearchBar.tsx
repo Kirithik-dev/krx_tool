@@ -267,30 +267,6 @@ export function GlassflowSearchBar({
           spellCheck={false}
           className="relative z-10 flex-1 min-w-0 bg-transparent border-0 outline-none focus-visible:outline-none font-sans-krx text-[10px] sm:text-[11.5px] md:text-[12px] font-normal tracking-[0.12em] sm:tracking-[0.25em] text-[#1D1B18] placeholder:text-[#4F4A42]/76 placeholder:tracking-[0.12em] sm:placeholder:tracking-[0.25em] caret-[#9B7B4A] [&::-webkit-search-cancel-button]:hidden [&::-webkit-search-decoration]:hidden"
         />
-
-        {/* Vertical Brushed-Titanium Hairline Divider + Shortcut Keycap */}
-        <div className="relative z-10 flex items-center gap-2.5 sm:gap-4 shrink-0">
-          <span
-            aria-hidden="true"
-            className="h-5 sm:h-6 w-[1px] bg-gradient-to-b from-transparent via-[#5E574E]/28 to-transparent"
-          />
-
-          <button
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              inputRef.current?.focus();
-            }}
-            aria-label="Focus search input (Command K)"
-            className={`inline-flex items-center justify-center min-w-[38px] sm:min-w-[48px] h-[26px] sm:h-[29px] px-2 sm:px-2.5 rounded-[7px] border text-[10.5px] sm:text-[12px] font-medium tracking-[0.06em] tabular-nums transition-all duration-300 cursor-pointer select-none ${
-              isFocused
-                ? 'bg-[#FAF6EE]/95 border-[#A68450]/58 text-[#1D1B18] shadow-[inset_0_1px_0_rgba(255,255,255,0.95),0_1px_3px_rgba(62,54,44,0.1)]'
-                : 'bg-[#F3EDE2]/78 border-[#7E766B]/28 text-[#2F2B26]/88 hover:border-[#7E766B]/45 hover:bg-[#FAF6EE]/90 shadow-[inset_0_1px_0_rgba(255,255,255,0.88),0_1px_2px_rgba(62,54,44,0.07)]'
-            }`}
-          >
-            ⌘ K
-          </button>
-        </div>
       </div>
     </motion.form>
   );

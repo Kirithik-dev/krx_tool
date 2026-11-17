@@ -255,35 +255,6 @@ export function ToolsPage({ toolSlug, onNavigateHome }: ToolsPageProps) {
             />
           </div>
 
-          {/* Unobtrusive Search Shortcuts & Usage Helper Line */}
-          <motion.div
-            initial={reducedMotion ? false : { opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.75, delay: 0.16, ease: KRX_TOKENS.motion.easeCinema }}
-            aria-label="Search shortcuts and usage tips"
-            className="mt-4 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-[10.5px] sm:text-[11px] tracking-[0.14em] uppercase text-[#4F4A42]/68 select-none text-center"
-          >
-            <span>
-              <strong className="font-medium text-[#2F2B26]/85">⌘K</strong> Focus
-            </span>
-            <span aria-hidden="true" className="text-[#8E6F3E]/55">
-              ·
-            </span>
-            <span>Search by tool, domain, or capability</span>
-            <span aria-hidden="true" className="text-[#8E6F3E]/55">
-              ·
-            </span>
-            <span>
-              <strong className="font-medium text-[#2F2B26]/85">↵</strong> Filter
-            </span>
-            <span aria-hidden="true" className="text-[#8E6F3E]/55">
-              ·
-            </span>
-            <span>
-              <strong className="font-medium text-[#2F2B26]/85">ESC</strong> Clear
-            </span>
-          </motion.div>
-
           {/* Minimal Cinematic Champagne Titanium Search Loading Animation */}
           <AnimatePresence>
             {isSearching && (
