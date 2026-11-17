@@ -1,0 +1,6 @@
+{
+  "name": "KRX",
+  "description": "An independent digital archive and studio for software engineering, artificial intelligence, system architecture, and creative technology.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

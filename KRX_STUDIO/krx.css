@@ -1,0 +1,135 @@
+@import "tailwindcss";
+
+:root {
+  --krx-abyss: #050505;
+  --krx-obsidian: #0a0a0a;
+  --krx-charcoal: #141414;
+  --krx-alabaster: #f3f1ed;
+  --krx-ivory: #e9e4dc;
+  --krx-orange: #ff5a1f;
+  --krx-amber: #d98a43;
+  --krx-gold: #d8b879;
+
+  --krx-font-display: 'Cormorant Garamond', Georgia, serif;
+  --krx-font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    background-color: var(--krx-abyss);
+    color: var(--krx-alabaster);
+    font-family: var(--krx-font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: clip;
+  }
+
+  body {
+    margin: 0;
+    background-color: var(--krx-abyss);
+    color: var(--krx-alabaster);
+    overflow-x: clip;
+  }
+
+  ::selection {
+    background-color: rgba(255, 90, 31, 0.25);
+    color: #f3f1ed;
+  }
+
+  :focus-visible {
+    outline: 1.5px solid var(--krx-orange);
+    outline-offset: 3px;
+  }
+}
+
+.font-display {
+  font-family: var(--krx-font-display);
+}
+
+.font-sans-krx {
+  font-family: var(--krx-font-sans);
+}
+
+.text-balance {
+  text-wrap: balance;
+}
+
+@keyframes krx-spin-cw {
+  from {
+    transform: rotateZ(0deg);
+  }
+  to {
+    transform: rotateZ(360deg);
+  }
+}
+
+@keyframes krx-spin-ccw {
+  from {
+    transform: rotateZ(360deg);
+  }
+  to {
+    transform: rotateZ(0deg);
+  }
+}
+
+.krx-orbit-outer {
+  animation: krx-spin-cw 18s linear infinite;
+}
+
+.krx-orbit-mid {
+  animation: krx-spin-ccw 12.5s linear infinite;
+}
+
+.krx-orbit-inner {
+  animation: krx-spin-cw 8.5s linear infinite;
+}
+
+@keyframes krx-studio-drift {
+  0% {
+    transform: translate3d(-2.5%, -1.5%, 0) scale(1);
+    opacity: 0.78;
+  }
+  50% {
+    transform: translate3d(2%, 1.2%, 0) scale(1.03);
+    opacity: 1;
+  }
+  100% {
+    transform: translate3d(-1%, 2%, 0) scale(0.99);
+    opacity: 0.84;
+  }
+}
+
+@keyframes krx-studio-breathe {
+  0% {
+    transform: scale(0.97);
+    opacity: 0.68;
+  }
+  100% {
+    transform: scale(1.04);
+    opacity: 0.96;
+  }
+}
+
+.krx-studio-drift {
+  animation: krx-studio-drift 28s ease-in-out infinite alternate;
+}
+
+.krx-studio-breathe {
+  animation: krx-studio-breathe 14s ease-in-out infinite alternate;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
