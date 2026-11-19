@@ -1,12 +1,15 @@
 import type { ComponentType } from 'react';
-import {
-  CERES_ASSETS,
-  CERES_METADATA,
-  CeresApp,
-  CeresCard,
-  type CeresAppProps,
-  type CeresCardProps,
-} from '../../src/tools/ceres';
+import { DrakCard } from '../components/drak/DrakCard';
+import { DrakPage } from '../pages/DrakPage';
+
+export interface ToolkitCardProps {
+  href?: string;
+  onSelect: () => void;
+}
+
+export interface ToolkitAppProps {
+  onBackToTools: () => void;
+}
 
 export interface ToolkitRegistryEntry {
   slug: string;
@@ -17,25 +20,24 @@ export interface ToolkitRegistryEntry {
   route: string;
   videoSrc: string;
   imageSrc: string;
-  CardComponent: ComponentType<CeresCardProps>;
-  ToolAppComponent: ComponentType<CeresAppProps>;
+  CardComponent: ComponentType<ToolkitCardProps>;
+  ToolAppComponent: ComponentType<ToolkitAppProps>;
 }
 
 /**
  * Modular registry of independent KRX tools displayed in the `/tools` showcase grid.
- * CERES (`src/tools/ceres/card.mp4`) is registered as the first tool in the grid.
  */
 export const KRX_TOOLKIT_REGISTRY: readonly ToolkitRegistryEntry[] = [
   {
-    slug: CERES_METADATA.id,
-    name: CERES_METADATA.name,
-    tagline: CERES_METADATA.tagline,
-    category: CERES_METADATA.category,
-    description: CERES_METADATA.tagline,
-    route: CERES_METADATA.route,
-    videoSrc: CERES_ASSETS.cardVideo,
-    imageSrc: CERES_ASSETS.cardPoster,
-    CardComponent: CeresCard,
-    ToolAppComponent: CeresApp,
+    slug: 'drak',
+    name: 'DRAK AI',
+    tagline: 'AUTONOMOUS RESEARCH & EVOLUTION ENGINE',
+    category: 'Autonomous Research & Evolution Engine',
+    description: 'Autonomous Research & Evolution Engine',
+    route: '/drak',
+    videoSrc: '',
+    imageSrc: '',
+    CardComponent: DrakCard,
+    ToolAppComponent: DrakPage,
   },
 ];

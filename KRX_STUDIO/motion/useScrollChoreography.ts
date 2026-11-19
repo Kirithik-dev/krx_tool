@@ -63,7 +63,7 @@ export function useInViewReveal<T extends HTMLElement = HTMLDivElement>(options?
 export function useActiveScene(): {
   activeScene: SceneMeta;
   scrollProgress: number;
-  scrollToScene: (id: string) => void;
+  scrollToScene: (id: string, options?: { behavior?: ScrollBehavior }) => void;
 } {
   const [activeId, setActiveId] = useState<string>(KRX_SCENES[0].id);
   const [scrollProgress, setScrollProgress] = useState<number>(0);
@@ -102,11 +102,12 @@ export function useActiveScene(): {
 
   const activeScene = KRX_SCENES.find((s) => s.id === activeId) ?? KRX_SCENES[0];
 
-  const scrollToScene = (id: string) => {
+  const scrollToScene = (id: string, options?: { behavior?: ScrollBehavior }) => {
     const target = document.getElementById(id);
     if (!target) return;
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    target.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' });
+    const behavior = reduced ? 'auto' : (options?.behavior ?? 'smooth');
+    target.scrollIntoView({ behavior, block: 'start' });
   };
 
   return { activeScene, scrollProgress, scrollToScene };

@@ -2,10 +2,15 @@ import { useCallback, useEffect, useState } from 'react';
 
 export type KrxRoute =
   | { view: 'home' }
-  | { view: 'tools'; toolSlug: string | null };
+  | { view: 'tools'; toolSlug: string | null }
+  | { view: 'drak' };
 
 export function parseKrxRoute(pathname: string): KrxRoute {
   const normalized = pathname.replace(/\/+$/, '') || '/';
+
+  if (normalized === '/drak') {
+    return { view: 'drak' };
+  }
 
   if (normalized === '/tools') {
     return { view: 'tools', toolSlug: null };

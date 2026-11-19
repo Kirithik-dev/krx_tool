@@ -12,6 +12,7 @@ interface ToolsPageProps {
   toolSlug: string | null;
   onNavigateHome: () => void;
   onNavigateTool?: (slug: string | null) => void;
+  onNavigateRoute?: (path: string) => void;
 }
 
 function BackArrow({ className = '' }: { className?: string }) {
@@ -140,6 +141,7 @@ export function ToolsPage({
   toolSlug,
   onNavigateHome,
   onNavigateTool,
+  onNavigateRoute,
 }: ToolsPageProps) {
   const reducedMotion = usePrefersReducedMotion();
   const [searchQuery, setSearchQuery] = useState<string>('');
@@ -177,6 +179,25 @@ export function ToolsPage({
   }, []);
 
   const handleSelectTool = (slug: string | null) => {
+    const matchedTool = slug
+      ? KRX_TOOLKIT_REGISTRY.find((t) => t.slug === slug)
+      : null;
+
+    if (matchedTool && !matchedTool.route.startsWith('/tools/')) {
+      if (onNavigateRoute) {
+        onNavigateRoute(matchedTool.route);
+        return;
+      }
+      if (
+        typeof window !== 'undefined' &&
+        window.location.pathname !== matchedTool.route
+      ) {
+        window.history.pushState(null, '', matchedTool.route);
+        window.dispatchEvent(new PopStateEvent('popstate'));
+      }
+      return;
+    }
+
     if (onNavigateTool) {
       onNavigateTool(slug);
       return;
@@ -227,7 +248,7 @@ export function ToolsPage({
     onNavigateHome();
   };
 
-  // When a dedicated tool slug is active (e.g. /tools/ceres), render its independent interface
+  // When a dedicated tool slug is active (e.g. /tools/:slug), render its independent interface
   if (activeTool) {
     const { ToolAppComponent } = activeTool;
     return <ToolAppComponent onBackToTools={() => handleSelectTool(null)} />;
@@ -315,7 +336,7 @@ export function ToolsPage({
           </AnimatePresence>
         </div>
 
-        {/* 3-Column Agency Portfolio Card Grid — CERES First */}
+        {/* 3-Column Agency Portfolio Card Grid */}
         <ToolkitCardGrid
           tools={visibleTools}
           onSelectTool={(slug) => handleSelectTool(slug)}

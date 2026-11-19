@@ -9,6 +9,7 @@ export interface VideoCrossfadeTransition {
   fromEntry: VideoManifestEntry | null;
   toEntry: VideoManifestEntry | null;
   toTone: SceneTone;
+  variant?: 'default' | 'quick-jump';
 }
 
 interface VideoCrossfadeStageProps {
@@ -63,6 +64,7 @@ function CrossfadeMediaLayer({
 
 export function VideoCrossfadeStage({ transition, onComplete }: VideoCrossfadeStageProps) {
   const reducedMotion = usePrefersReducedMotion();
+  const isQuickJump = transition?.variant === 'quick-jump';
 
   useEffect(() => {
     if (!transition) return;
@@ -72,12 +74,13 @@ export function VideoCrossfadeStage({ transition, onComplete }: VideoCrossfadeSt
     }
 
     // Hold during scroll travel & cross-dissolve, then trigger AnimatePresence exit fade-out
+    const holdMs = isQuickJump ? 400 : 580;
     const timer = window.setTimeout(() => {
       onComplete(transition.id);
-    }, 580);
+    }, holdMs);
 
     return () => window.clearTimeout(timer);
-  }, [transition, reducedMotion, onComplete]);
+  }, [transition, reducedMotion, isQuickJump, onComplete]);
 
   if (reducedMotion) return null;
 
@@ -91,8 +94,20 @@ export function VideoCrossfadeStage({ transition, onComplete }: VideoCrossfadeSt
           aria-hidden="true"
           data-crossfade-active="true"
           initial={{ opacity: 0 }}
-          animate={{ opacity: 0.96, transition: { duration: 0.32, ease: KRX_TOKENS.motion.easeCinema } }}
-          exit={{ opacity: 0, transition: { duration: 0.52, ease: KRX_TOKENS.motion.easeCinema } }}
+          animate={{
+            opacity: isQuickJump ? 0.88 : 0.96,
+            transition: {
+              duration: isQuickJump ? 0.24 : 0.32,
+              ease: KRX_TOKENS.motion.easeCinema,
+            },
+          }}
+          exit={{
+            opacity: 0,
+            transition: {
+              duration: isQuickJump ? 0.46 : 0.52,
+              ease: KRX_TOKENS.motion.easeCinema,
+            },
+          }}
           className={`pointer-events-none fixed inset-0 z-30 overflow-hidden ${
             isLightTarget ? 'bg-[#F3F1ED]' : 'bg-[#050505]'
           }`}
@@ -101,9 +116,9 @@ export function VideoCrossfadeStage({ transition, onComplete }: VideoCrossfadeSt
           {transition.fromEntry && (
             <CrossfadeMediaLayer
               entry={transition.fromEntry}
-              initialOpacity={0.72}
+              initialOpacity={isQuickJump ? 0.58 : 0.72}
               animateOpacity={0}
-              duration={0.55}
+              duration={isQuickJump ? 0.42 : 0.55}
             />
           )}
 
@@ -112,9 +127,9 @@ export function VideoCrossfadeStage({ transition, onComplete }: VideoCrossfadeSt
             <CrossfadeMediaLayer
               entry={transition.toEntry}
               initialOpacity={0}
-              animateOpacity={0.76}
-              duration={0.55}
-              delay={0.06}
+              animateOpacity={isQuickJump ? 0.64 : 0.76}
+              duration={isQuickJump ? 0.44 : 0.55}
+              delay={isQuickJump ? 0.04 : 0.06}
             />
           )}
 
